@@ -47,42 +47,52 @@ class Room {
 
   public:
     // constructor
-    Room(int roomNo, string roomType, double price) : roomNo(roomNo), roomType(roomType), price(price), isAvailable(true) {}
+    Room(int no, string type, double price, bool availability) : roomNo(no), roomType(type), price(price), isAvailable(availability) {}
 
     //getter
-    int getRoomNo() {
+    int getRoomNo() const {
       return roomNo;
     }
 
-    string getRoomType() {
+    string getRoomType() const {
       return roomType;
     }
 
-    double getRoomPrice() {
+    double getRoomPrice() const {
       return price;
     }
 
-    bool roomIsAvailable() {
+    bool getRoomAvailability() const {
       return isAvailable;
     }
 
     //setter
-    void setRoomNo(int roomNo) {
-      this -> roomNo = roomNo;
+    void setRoomNo(int no) {
+      this -> roomNo = no;
     }
 
-    void setRoomType(string roomType) {
-      this -> roomType = roomType;
+    void setRoomType(string type) {
+      this -> roomType = type;
     }
 
-    void setRoomPrice(double roomPrice) {
-      this -> price = roomPrice;
+    void setRoomPrice(double newPrice) {
+      this -> price = newPrice;
     }
 
-    void setIsAvailable(bool isAvailable) {
-      this -> isAvailable = isAvailable;
+    void setRoomAvailability(bool availability) {
+      this -> isAvailable = availability;
     }
 };
+
+void displayRooms(const vector<Room>& rooms) {
+  cout << "\nAvailable Rooms: \n";
+  for (const auto& room : rooms) {
+    cout  << "Room No: " << room.getRoomNo() << "\n"
+          << "Type: " << room.getRoomType() << "\n"
+          << "Price: Php" << room.getRoomPrice() << "\n"
+          << "Available: " << (room.getRoomAvailability() ? "Yes" : "No") << "\n\n";
+    }
+}
 
 class ParkInnLodge {
   private:
@@ -97,6 +107,6 @@ class ParkInnLodge {
 
 
     virtual void viewBookingHistory () const {
-      cout << "View Booking hgchvjhcHistory: " << endl;
+      cout << "View Booking History: " << 
     }
 };
