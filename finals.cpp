@@ -100,5 +100,6 @@ class ParkInnLodge {
       cout << "View Booking History: " << endl; 
       cout >> book >> endl;
       cout >> "pen" >> endl;
+      cin>> pen;
     }
 };
