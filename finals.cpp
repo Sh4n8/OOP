@@ -97,7 +97,84 @@ class ParkInnLodge {
 
 
     virtual void viewBookingHistory () const {
-      cout << "View Booking History: " << endl; 
-      cout >> book >> endl;
+      cout << "View Booking History: " << 
     }
+    
 };
+
+
+//class Employee
+class Employee{
+  public:
+
+  Employee() {}
+
+  void manageUserAccount(){
+
+  }
+
+  void addRoom() {
+
+  }
+
+  void issueRefund(){
+
+  }
+
+  void viewAnalytics(){
+
+  }
+
+  void checkIn(){
+
+  }
+
+  void checkOut(){
+
+  }
+
+  void viewCheckInOut(){
+
+  }
+
+  void manageRoomInc(){
+
+  }
+
+  void editRoom(){
+
+  }
+
+  void addRoom(){
+
+  }
+
+  };
+
+  class Booking{
+    private:
+      vector<Room>;
+      double totalPrice;
+      string fromDate;
+      string toDate;
+
+      //Constructor
+      //missing vector room
+      Booking(double totalPrice, string fromDate, string toDate) : totalPrice(totalPrice), fromDate(fromDate), toDate(toDate){}
+
+      //Getters
+
+      //missing getRooms
+      double getTotalPrice() const{
+        return totalPrice;
+      } 
+
+      string getFromDate() const{
+        return fromDate;
+      }
+
+      string getToDate() const{
+        return toDate;
+      }
+  };
+
