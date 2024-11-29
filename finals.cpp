@@ -3,105 +3,11 @@
 #include <vector>
 using namespace std;
 
-//Class User
-class User {
-  protected: 
-    string name, email, password;
-
-  //Constructor
-  public:
-    User(string name, string email, string password) : name(name), email(email), password(password) {}
-
-    //Getters
-    string getName() const{
-      return name;
-    }
-
-    string getEmail() const{
-      return email;
-    }
-    
-    //Setters
-    void setName(string name) {
-      this -> name = name;
-    }
-
-    void setEmail(string email) {
-      this -> email = email;
-    }
+struct User{
+  string email, name, password, roomType;
+  int roomNumber;
+  bool isAvailable;
 };
-
-class Customer : public User {
-  private:
-    vector<Booking> bookingHistory;
-    
-}
-
-//Class Room
-class Room {
-  private:
-    int roomNo;
-    string roomType;
-    double price;
-    bool isAvailable;
-
-  public:
-    // constructor
-    Room(int roomNo, string roomType, double price) : roomNo(roomNo), roomType(roomType), price(price), isAvailable(true) {}
-
-    //getter
-    int getRoomNo() {
-      return roomNo;
-    }
-
-    string getRoomType() {
-      return roomType;
-    }
-
-    double getRoomPrice() {
-      return price;
-    }
-
-    bool roomIsAvailable() {
-      return isAvailable;
-    }
-
-    //setter
-    void setRoomNo(int roomNo) {
-      this -> roomNo = roomNo;
-    }
-
-    void setRoomType(string roomType) {
-      this -> roomType = roomType;
-    }
-
-    void setRoomPrice(double roomPrice) {
-      this -> price = roomPrice;
-    }
-
-    void setIsAvailable(bool isAvailable) {
-      this -> isAvailable = isAvailable;
-    }
-};
-
-class ParkInnLodge {
-  private:
-    vector(User) users;
-    vector(Room) rooms;
-
-  public:
-    // construct objects
-    void createAccount(string name, string email, string password) : User(name, email, password) {}
-    void addRoom(int roomNo, string roomType, double price) : Room(roomNo, roomType, price) {}
-
-
-
-    virtual void viewBookingHistory () const {
-      cout << "View Booking History: " << 
-    }
-    
-};
-
 
 //class Employee
 class Employee{
@@ -165,7 +71,7 @@ class Employee{
     string email;
     cout<< "Enter email of the user to view: ";
     cin >> email;
-  }
+  
 
   bool found = false;
   for (const auto& user : users){
@@ -173,7 +79,8 @@ class Employee{
       cout << "\n--- User Details ---\n";
       cout << "Name: " << user.name << "\n";
       cout << "Email: " << user.email << "\n";
-      found = truebreak;
+      found = true;
+      break;
     }
   }
 
@@ -191,7 +98,7 @@ void updateUser(){
   for (auto&user : users){
     if (user.email == email){
       cout << "Enter new name: ";
-      cin.ignore;
+      cin.ignore();
       getline(cin, user.name);
       cout << "Enter new password: ";
       cin >> user.password;
@@ -206,8 +113,34 @@ void updateUser(){
   }
 }
 
-  void addRoom() {
+void deleteUser() {
+  string email;
+  cout << "Enter email of the user to delete: ";
+  cin >> email;
 
+  for (auto it = users.begin(); it != users.end(); ++it){
+    if(it->email == email){
+      users.erase(it);
+      cout << "User account deleted successfully!\n";
+      return;
+    }
+  }
+  cout << "User not found.\n";
+}
+
+
+  void addRoom() {
+    Room newRoom;
+
+    cout << "Enter Room Number: ";
+    cin >> newRoom.roomNumber;
+
+    for(const auto& room : rooms){
+      if(room.roomNumber == newRoom.roomNumber){
+        cout << "Room with this number already exist.\n";
+        return;
+      }
+    }
   }
 
   void issueRefund(){
@@ -244,30 +177,5 @@ void updateUser(){
 
   };
 
-  class Booking{
-    private:
-      vector<Room>;
-      double totalPrice;
-      string fromDate;
-      string toDate;
-
-      //Constructor
-      //missing vector room
-      Booking(double totalPrice, string fromDate, string toDate) : totalPrice(totalPrice), fromDate(fromDate), toDate(toDate){}
-
-      //Getters
-
-      //missing getRooms
-      double getTotalPrice() const{
-        return totalPrice;
-      } 
-
-      string getFromDate() const{
-        return fromDate;
-      }
-
-      string getToDate() const{
-        return toDate;
-      }
-  };
+ 
 
