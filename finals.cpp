@@ -102,3 +102,33 @@ class ParkInnLodge {
      
     }
 };
+Unang araw
+class Booking {
+  private:
+    vector<int> rooms;  
+    double totalPrice;
+    string fromDate;
+    string toDate;
+
+  public:
+    
+    Booking(vector<int> rooms, double totalPrice, string fromDate, string toDate) 
+        : rooms(rooms), totalPrice(totalPrice), fromDate(fromDate), toDate(toDate) {}
+
+    
+    vector<int> getRooms() const {
+        return rooms;
+    }
+
+    double getTotalPrice() const {
+        return totalPrice;
+    }
+
+    string getFromDate() const {
+        return fromDate;
+    }
+
+    string getToDate() const {
+        return toDate;
+    }
+};
