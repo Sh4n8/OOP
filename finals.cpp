@@ -1,112 +1,149 @@
 #include <iostream>
-#include <string>
 #include <vector>
+#include <string>
+
 using namespace std;
 
-//Class User
-class User {
-  protected: 
-    string name, email, password;
-
-  //Constructor
-  public:
-    User(string name, string email, string password) : name(name), email(email), password(password) {}
-
-    //Getters
-    string getName() const{
-      return name;
-    }
-
-    string getEmail() const{
-      return email;
-    }
-    
-    //Setters
-    void setName(string name) {
-      this -> name = name;
-    }
-
-    void setEmail(string email) {
-      this -> email = email;
-    }
-};
-
-class Customer : public User {
-  private:
-    vector<Booking> bookingHistory;
-    
-}
-
-//Class Room
 class Room {
-  private:
-    int roomNo;
+protected:
+    string roomNo;
     string roomType;
     double price;
     bool isAvailable;
 
-  public:
-    // constructor
-    Room(int no, string type, double price, bool availability) : roomNo(no), roomType(type), price(price), isAvailable(availability) {}
+public:
+    Room() : roomNo(""), roomType(""), price(0.0), isAvailable(true) {}
 
-    //getter
-    int getRoomNo() const {
-      return roomNo;
+    // Getters
+    string getRoomNo() const { return roomNo; }
+    string getRoomType() const { return roomType; }
+    double getRoomPrice() const { return price; }
+    bool getRoomAvailability() const { return isAvailable; }
+
+    // Setters
+    void setRoomNo(const string &no) { roomNo = no; }
+    void setRoomType(const string &type) { roomType = type; }
+    void setRoomPrice(double p) { price = p; }
+    void setRoomAvailability(bool available) { isAvailable = available; }
+
+    // Display room details
+    virtual void displayRoomInfo() const {
+        cout << "[ID: " << roomNo << "] " << roomType << "\n"
+             << "- Price: Php " << price << "/night\n"
+             << "- Availability: " << (isAvailable ? "Available" : "Not Available") << endl;
     }
 
-    string getRoomType() const {
-      return roomType;
-    }
+    virtual ~Room() {}
+};
 
-    double getRoomPrice() const {
-      return price;
-    }
+// Standard Room Class
+class StandardRoom : public Room {
+    string bedSize;
 
-    bool getRoomAvailability() const {
-      return isAvailable;
-    }
+public:
+    StandardRoom() : bedSize("Double") {}
 
-    //setter
-    void setRoomNo(int no) {
-      this -> roomNo = no;
-    }
+    // Getters and Setters
+    string getBedSize() const { return bedSize; }
+    void setBedSize(const string &size) { bedSize = size; }
 
-    void setRoomType(string type) {
-      this -> roomType = type;
-    }
-
-    void setRoomPrice(double newPrice) {
-      this -> price = newPrice;
-    }
-
-    void setRoomAvailability(bool availability) {
-      this -> isAvailable = availability;
+    // Display details
+    void displayRoomInfo() const override {
+        Room::displayRoomInfo();
+        cout << "- Bed Size: " << bedSize << "\n" << endl;
     }
 };
 
-void displayRooms(const vector<Room>& rooms) {
-  cout << "\nAvailable Rooms: \n";
-  for (const auto& room : rooms) {
-    cout  << "Room No: " << room.getRoomNo() << "\n"
-          << "Type: " << room.getRoomType() << "\n"
-          << "Price: Php" << room.getRoomPrice() << "\n"
-          << "Available: " << (room.getRoomAvailability() ? "Yes" : "No") << "\n\n";
+// Deluxe Room Class
+class DeluxeRoom : public Room {
+    string bedSize;
+    bool extraBedAvailable;
+
+public:
+    DeluxeRoom() : bedSize("Queen"), extraBedAvailable(false) {}
+
+    // Getters and Setters
+    string getBedSize() const { return bedSize; }
+    void setBedSize(const string &size) { bedSize = size; }
+
+    bool getExtraBedAvailable() const { return extraBedAvailable; }
+    void setExtraBedAvailable(bool available) { extraBedAvailable = available; }
+
+    // Display details
+    void displayRoomInfo() const override {
+        Room::displayRoomInfo();
+        cout << "- Bed Size: " << bedSize << "\n"
+             << "- Extra Bed Available: " << (extraBedAvailable ? "Yes" : "No") << "\n" << endl;
+    }
+};
+
+// Suite Room Class
+class SuiteRoom : public Room {
+    bool hasLivingRoom;
+    bool hasKitchen;
+    int noOfBedrooms;
+
+public:
+    SuiteRoom() : hasLivingRoom(true), hasKitchen(true), noOfBedrooms(2) {}
+
+    // Getters and Setters
+    bool getLivingRoom() const { return hasLivingRoom; }
+    void setLivingRoom(bool livingRoom) { hasLivingRoom = livingRoom; }
+
+    bool getKitchen() const { return hasKitchen; }
+    void setKitchen(bool kitchen) { hasKitchen = kitchen; }
+
+    int getNoOfBedrooms() const { return noOfBedrooms; }
+    void setNoOfBedrooms(int bedrooms) { noOfBedrooms = bedrooms; }
+
+    // Display details
+    void displayRoomInfo() const override {
+        Room::displayRoomInfo();
+        cout << "- Living Room: " << (hasLivingRoom ? "Yes" : "No") << "\n"
+             << "- Kitchen: " << (hasKitchen ? "Yes" : "No") << "\n"
+             << "- No. of Bedrooms: " << noOfBedrooms << "\n" << endl;
+    }
+};
+
+// Function to display all available rooms
+void displayAvailableRooms(const vector<Room *> &rooms) {
+    cout << "----------Park Inn Lodge Available Rooms----------\n" << endl;
+    for (const auto &room : rooms) {
+        room->displayRoomInfo();
     }
 }
 
-class ParkInnLodge {
-  private:
-    vector(User) users;
-    vector(Room) rooms;
+int main() {
+    vector<Room *> rooms;
 
-  public:
-    // construct objects
-    void createAccount(string name, string email, string password) : User(name, email, password) {}
-    void addRoom(int roomNo, string roomType, double price) : Room(roomNo, roomType, price) {}
+    // Adding rooms to the list
+    StandardRoom *standard = new StandardRoom();
+    standard->setRoomNo("RM102");
+    standard->setRoomType("Standard Room");
+    standard->setRoomPrice(2000);
+    rooms.push_back(standard);
 
+    DeluxeRoom *deluxe = new DeluxeRoom();
+    deluxe->setRoomNo("RM101");
+    deluxe->setRoomType("Deluxe Room");
+    deluxe->setRoomPrice(6000);
+    deluxe->setExtraBedAvailable(true);
+    rooms.push_back(deluxe);
 
+    SuiteRoom *suite = new SuiteRoom();
+    suite->setRoomNo("RM201");
+    suite->setRoomType("Suite Room");
+    suite->setRoomPrice(10000);
+    suite->setNoOfBedrooms(3);
+    rooms.push_back(suite);
 
-    virtual void viewBookingHistory () const {
-      cout << "View Booking History: " << 
+    // Display rooms
+    displayAvailableRooms(rooms);
+
+    // Clean up memory
+    for (auto room : rooms) {
+        delete room;
     }
-};
+
+    return 0;
+}
