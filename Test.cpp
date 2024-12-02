@@ -228,6 +228,8 @@ public:
 // Initialize the static instance
 HotelManagementSystem* HotelManagementSystem::instance = nullptr;
 
+
+
 // Main Application
 int main() {
     try {

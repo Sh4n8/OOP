@@ -112,38 +112,3 @@ void displayAvailableRooms(const vector<Room *> &rooms) {
         room->displayRoomInfo();
     }
 }
-
-int main() {
-    vector<Room *> rooms;
-
-    // Adding rooms to the list
-    StandardRoom *standard = new StandardRoom();
-    standard->setRoomNo("RM102");
-    standard->setRoomType("Standard Room");
-    standard->setRoomPrice(2000);
-    rooms.push_back(standard);
-
-    DeluxeRoom *deluxe = new DeluxeRoom();
-    deluxe->setRoomNo("RM101");
-    deluxe->setRoomType("Deluxe Room");
-    deluxe->setRoomPrice(6000);
-    deluxe->setExtraBedAvailable(true);
-    rooms.push_back(deluxe);
-
-    SuiteRoom *suite = new SuiteRoom();
-    suite->setRoomNo("RM201");
-    suite->setRoomType("Suite Room");
-    suite->setRoomPrice(10000);
-    suite->setNoOfBedrooms(3);
-    rooms.push_back(suite);
-
-    // Display rooms
-    displayAvailableRooms(rooms);
-
-    // Clean up memory
-    for (auto room : rooms) {
-        delete room;
-    }
-
-    return 0;
-}
