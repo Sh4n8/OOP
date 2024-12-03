@@ -23,8 +23,8 @@ public:
         : number(number), expiration(expiration), pin(pin), isCredit(isCredit) {}
 
     void processPayment(double amount) override {
-        // Implement credit/debit card payment processing logic here
-        cout << "Processing " << (isCredit ? "credit" : "debit") << " card payment of $" << amount << endl;
+       
+        cout << "Processing " << (isCredit ? "credit" : "debit") << " card payment of Php" << amount << endl;
     }
 
     string getType() const override {
@@ -40,8 +40,8 @@ public:
     GCash(const string& number) : number(number) {}
 
     void processPayment(double amount) override {
-        // Implement GCash payment processing logic here
-        cout << "Processing GCash payment of $" << amount << endl;
+        
+        cout << "Processing GCash payment of Php" << amount << endl;
     }
 
     string getType() const override {
@@ -55,9 +55,21 @@ int main() {
         new GCash("09123456789")
     };
 
-    for (const auto& paymentMethod : paymentMethods) {
-        paymentMethod->processPayment(100.00);
-        cout << "Payment Method Type: " << paymentMethod->getType() << endl;
+    double amount = 100.00;
+    int choice;
+
+    cout << "Available Payment Methods:\n";
+    for (size_t i = 0; i < paymentMethods.size(); i++) {
+        cout << i + 1 << ". " << paymentMethods[i]->getType() << endl;
+    }
+
+    cout << "Enter your choice (1-" << paymentMethods.size() << "): ";
+    cin >> choice;
+
+    if (choice >= 1 && choice <= static_cast<int>(paymentMethods.size())) {
+        paymentMethods[choice - 1]->processPayment(amount);
+    } else {
+        cout << "Invalid choice." << endl;
     }
 
     for (auto paymentMethod : paymentMethods) {
