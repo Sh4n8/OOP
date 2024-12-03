@@ -1,75 +1,68 @@
 #include <iostream>
 #include <string>
-#include <iomanip>
 #include <vector>
+
 using namespace std;
 
 class PaymentMethod {
-protected:
-string method;
-
 public:
-  PaymentMethod (string method = "") : method(method){}
-
-  string getMethod() const{
-    return method;
-  }
-
-  virtual void displayDetails() const{
-    cout << "Payment Method: " << method << endl;
-  }
-
-  virtual ~PaymentMethod() {}
+    virtual void processPayment(double amount) = 0;
+    virtual string getType() const = 0;
+    virtual ~PaymentMethod() {}
 };
 
 class Card : public PaymentMethod {
 private:
-  string number;
-  string expiration;
-  string pin;
-  bool isCredit;
+    string number;
+    string expiration;
+    string pin;
+    bool isCredit;
 
 public:
-  Card(string method, string number, string pin, string expiration, bool isCredit) :
-  PaymentMethod(method), number(number), expiration(expiration), pin(pin), isCredit(isCredit) {}
+    Card(const string& number, const string& expiration, const string& pin, bool isCredit)
+        : number(number), expiration(expiration), pin(pin), isCredit(isCredit) {}
 
-  bool getIsCredit() const {
-    return isCredit;
-  }
-
-  void deleteCard(){
-    number.clear();
-    expiration.clear();
-    pin.clear();
-    cout << "Card details have been deleted.\n";
-  }
-
-  void displayDetails() const override {
-    PaymentMethod :: displayDetails();
-    cout << "Card Number: " << number << "\n";
-    cout << "Expiration: " << expiration << "\n";
-    cout << "Is Credit: " << (isCredit ? "Yes" : "No") << endl;
-  }
-
-};
-
-class Gcash : public PaymentMethod {
-  private:
-  string number;
-
-  public:
-    Gcash(string method, string number) : PaymentMethod(method), number(number) {}
-
-    string getNumber() const {
-      return number;
+    void processPayment(double amount) override {
+        // Implement credit/debit card payment processing logic here
+        cout << "Processing " << (isCredit ? "credit" : "debit") << " card payment of $" << amount << endl;
     }
 
-    void setNumber (string newNumber) {
-    number = newNumber;
-    }
-
-    void displayDetails() const override {
-      PaymentMethod :: displayDetails();
-      cout << "Gcash Number: " << number << endl;
+    string getType() const override {
+        return "Card";
     }
 };
+
+class GCash : public PaymentMethod {
+private:
+    string number;
+
+public:
+    GCash(const string& number) : number(number) {}
+
+    void processPayment(double amount) override {
+        // Implement GCash payment processing logic here
+        cout << "Processing GCash payment of $" << amount << endl;
+    }
+
+    string getType() const override {
+        return "GCash";
+    }
+};
+
+int main() {
+    vector<PaymentMethod*> paymentMethods = {
+        new Card("1234567890", "12/24", "1234", true),
+        new GCash("09123456789")
+    };
+
+    for (const auto& paymentMethod : paymentMethods) {
+        paymentMethod->processPayment(100.00);
+        cout << "Payment Method Type: " << paymentMethod->getType() << endl;
+    }
+
+    for (auto paymentMethod : paymentMethods) {
+        delete paymentMethod;
+    }
+
+    return 0;
+}
