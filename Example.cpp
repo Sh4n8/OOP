@@ -431,7 +431,7 @@ public:
         if (bookingIt != bookings.end()) {
             bookings.erase(bookingIt);
             cout << "Booking " << bookingId << " has been cancelled." << endl;
-            } else {
+        } else {
             cout << "Booking not found." << endl;
         }
     }
