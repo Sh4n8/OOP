@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <string>
 using namespace std;
 
@@ -529,7 +530,7 @@ public:
 
         // Simulate payment processing
         cout << "Processing " << (isCredit ? "credit" : "debit") 
-             << " card payment of Php" << amount << endl;
+             << " card payment of Php " << amount << endl;
         
         // Simulate transaction confirmation
         char confirm;
@@ -556,7 +557,7 @@ private:
     double balance;
 
 public:
-    GCash(const string& number, double initialBalance = 5000.0) 
+    GCash(const string& number, double initialBalance = 10000.0) 
         : number(number), balance(initialBalance) {}
 
     bool processPayment(double amount) override {
@@ -616,15 +617,94 @@ public:
 
 
 int main() {
-    ParkInnLodge parkInn;
+    unique_ptr<PaymentMethod> paymentMethod;
+    double amount;
 
-    // Start the main menu
-    displayMainMenu(parkInn);
+    while (true) {
+        // Start the main menu
+        cout << "\n--- Welcome to the Payment Portal ---\n";
+        cout << "Enter the amount to be paid: Php ";
+        cin >> amount;
+
+        cout << "\nChoose a payment method:\n";
+        cout << "1. Credit Card\n";
+        cout << "2. Debit Card\n";
+        cout << "3. GCash\n";
+        cout << "4. Exit\n"; 
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                string cardNumber, expirationDate, pin;
+                cout << "\nEnter Credit Card details:\n";
+                cout << "Card Number: ";
+                cin >> cardNumber;
+                cout << "Expiration Date (MM/YY): ";
+                cin >> expirationDate;
+                cout << "PIN: ";
+                cin >> pin;
+
+                paymentMethod = make_unique<Card>(cardNumber, expirationDate, pin, true);
+                break;
+            }
+
+            case 2: {
+                string cardNumber, expirationDate, pin;
+                cout << "\nEnter Debit Card details:\n";
+                cout << "Card Number: ";
+                cin >> cardNumber;
+                cout << "Expiration Date (MM/YY): ";
+                cin >> expirationDate;
+                cout << "PIN: ";
+                cin >> pin;
+
+                paymentMethod = make_unique<Card>(cardNumber, expirationDate, pin, false, 5000.0); 
+                break;
+            }
+
+            case 3: {
+                string phoneNumber;
+                cout << "\nEnter GCash details:\n";
+                cout << "Phone Number: ";
+                cin >> phoneNumber;
+
+                paymentMethod = make_unique<GCash>(phoneNumber);
+                break;
+            }
+
+            case 4:
+                cout << "Thank you for using the payment portal. Goodbye!\n";
+                return 0;
+
+            default:
+                cout << "Invalid choice. Please try again.\n";
+                continue;
+        }
+
+        // Process payment
+        if (paymentMethod && paymentMethod->processPayment(amount)) {
+            cout << "Payment processed successfully using " << paymentMethod->getType() << ".\n";
+        } else {
+            cout << "Payment failed. Please try again.\n";
+        }
+
+        
+        char restart;
+        cout << "\nDo you want to process another payment? (Y/N): ";
+        cin >> restart;
+
+        if (restart != 'Y' && restart != 'y') {
+            cout << "Thank you for using the payment portal. Goodbye!\n";
+            break;
+        }
+    }
 
     return 0;
 }
 
-
+    
 
 
 //ParkInnLodge parkInn;
