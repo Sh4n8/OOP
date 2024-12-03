@@ -3,7 +3,6 @@
 #include <string>
 using namespace std;
 
-// Base class: Room
 class Room {
 protected:
     int roomNo;
@@ -12,15 +11,159 @@ protected:
     bool isAvailable;
 
 public:
-    Room(int no, string type, double p)
-        : roomNo(no), roomType(type), price(p), isAvailable(true) {}
+    Room(int roomNo, string roomType, double price) : roomNo(roomNo), roomType(roomType), price(price), isAvailable(true) {}
 
-    int getRoomNo() { return roomNo; }
-    string getRoomType() { return roomType; }
-    double getRoomPrice() { return price; }
-    bool getRoomAvailability() { return isAvailable; }
-    void setRoomAvailability(bool available) { isAvailable = available; }
+    // Getters
+    int getRoomNo() const { return roomNo; }
+    string getRoomType() const { return roomType; }
+    double getRoomPrice() const { return price; }
+    bool getRoomAvailability() const { return isAvailable; }
+
+    // Setters
+    void setRoomNo(const int &no) { this->roomNo = no; }
+    void setRoomType(const string &type) { this->roomType = type; }
+    void setRoomPrice(double p) { this->price = p; }
+    void setRoomAvailability(bool available) { this->isAvailable = available; }
+
+    // Display room details
+    virtual void displayRoomInfo() const {
+        cout << "[ID: " << roomNo << "] " << roomType << "\n"
+             << "- Price: Php " << price << "/night\n"
+             << "- Availability: " << (isAvailable ? "Available" : "Not Available") << endl;
+    }
+
+    virtual ~Room() {}
 };
+
+// Standard Room Class
+class StandardRoom : public Room {
+private:
+    string bedSize;
+
+public:
+    StandardRoom(int roomNo, double price) : Room(roomNo, "STANDARD", price), bedSize("Double") {}
+
+    // Getters and Setters
+    string getBedSize() const { return bedSize; }
+    void setBedSize(const string &size) { bedSize = size; }
+
+    // Display details
+    void displayRoomInfo() const override {
+        Room::displayRoomInfo();
+        cout << "- Bed Size: " << bedSize << "\n" << endl;
+    }
+};
+
+// Deluxe Room Class
+class DeluxeRoom : public Room {
+    string bedSize;
+    bool extraBedAvailable;
+
+public:
+    DeluxeRoom(int roomNo, double price) : Room(roomNo, "DELUXE", price), bedSize("Queen"), extraBedAvailable(false) {}
+
+    // Getters and Setters
+    string getBedSize() const { return bedSize; }
+    void setBedSize(const string &size) { bedSize = size; }
+
+    bool getExtraBedAvailable() const { return extraBedAvailable; }
+    void setExtraBedAvailable(bool available) { extraBedAvailable = available; }
+
+    // Display details
+    void displayRoomInfo() const override {
+        Room::displayRoomInfo();
+        cout << "- Bed Size: " << bedSize << "\n"
+             << "- Extra Bed Available: " << (extraBedAvailable ? "Yes" : "No") << "\n" << endl;
+    }
+};
+
+// Suite Room Class
+class SuiteRoom : public Room {
+    bool hasLivingRoom;
+    bool hasKitchen;
+    int noOfBedrooms;
+
+public:
+    SuiteRoom(int roomNo, double price) : Room(roomNo, "SUITE", price), hasLivingRoom(true), hasKitchen(true), noOfBedrooms(2) {}
+
+    // Getters and Setters
+    bool getLivingRoom() const { return hasLivingRoom; }
+    void setLivingRoom(bool livingRoom) { hasLivingRoom = livingRoom; }
+
+    bool getKitchen() const { return hasKitchen; }
+    void setKitchen(bool kitchen) { hasKitchen = kitchen; }
+
+    int getNoOfBedrooms() const { return noOfBedrooms; }
+    void setNoOfBedrooms(int bedrooms) { noOfBedrooms = bedrooms; }
+
+    // Display details
+    void displayRoomInfo() const override {
+        Room::displayRoomInfo();
+        cout << "- Living Room: " << (hasLivingRoom ? "Yes" : "No") << "\n"
+             << "- Kitchen: " << (hasKitchen ? "Yes" : "No") << "\n"
+             << "- No. of Bedrooms: " << noOfBedrooms << "\n" << endl;
+    }
+};
+
+class Booking {
+private:
+    vector<int> rooms;  
+    double totalPrice;
+    string fromDate;
+    string toDate;
+    int numberOfGuests;
+    string paymentMethod;
+
+public:
+    Booking(vector<int> rooms, double totalPrice, string fromDate, string toDate, int guests, string payment) 
+        : rooms(rooms), totalPrice(totalPrice), fromDate(fromDate), toDate(toDate), 
+          numberOfGuests(guests), paymentMethod(payment) {}
+
+    vector<int> getRooms() const {
+        return rooms;
+    }
+
+    double getTotalPrice() const {
+        return totalPrice;
+    }
+
+    string getFromDate() const {
+        return fromDate;
+    }
+
+    string getToDate() const {
+        return toDate;
+    }
+
+    int getNumberOfGuests() const {
+        return numberOfGuests;
+    }
+
+    string getPaymentMethod() const {
+        return paymentMethod;
+    }
+
+    void updateDates(string newFromDate, string newToDate) {
+        fromDate = newFromDate;
+        toDate = newToDate;
+    }
+
+    void updateRoom(vector<int> newRooms) {
+        rooms = newRooms;
+    }
+
+    void updateGuests(int newNumberOfGuests) {
+        numberOfGuests = newNumberOfGuests;
+    }
+};
+
+// Function to display all available rooms
+void displayAvailableRooms(const vector<Room *> &rooms) {
+    cout << "----------Park Inn Lodge Available Rooms----------\n" << endl;
+    for (const auto &room : rooms) {
+        room->displayRoomInfo();
+    }
+}
 
 // Base class: User
 class User {
@@ -125,24 +268,6 @@ public:
     }
 };
 
-// Derived class: StandardRoom
-class StandardRoom : public Room {
-public:
-    StandardRoom(int no, double p) : Room(no, "Standard", p) {}
-};
-
-// Derived class: DeluxeRoom
-class DeluxeRoom : public Room {
-public:
-    DeluxeRoom(int no, double p) : Room(no, "Deluxe", p) {}
-};
-
-// Derived class: SuiteRoom
-class SuiteRoom : public Room {
-public:
-    SuiteRoom(int no, double p) : Room(no, "Suite", p) {}
-};
-
 // ParkInnLodge class
 class ParkInnLodge {
     vector<User *> users;
@@ -152,6 +277,20 @@ public:
     void createAccount(User *user) {
         users.push_back(user);
         user->createAccount();
+    }
+
+    void deleteAccount(User *user) {
+        auto it = std::find(users.begin(), users.end(), user);
+
+        // If the user is found
+        if (it != users.end()) {
+            // Remove the user from the vector
+            users.erase(it);
+
+            cout << "User has been deleted." << endl;
+        } else {
+            cout << "User not found." << endl;
+        }
     }
 
     void addRoom(Room *room) {
@@ -185,81 +324,87 @@ void displayCustomerMenu(Customer *customer, ParkInnLodge *lodge) {
         cout << "4. View Available Rooms\n";
         cout << "5. Sign-out\n";
         cout << "6. Create Account\n";
+        cout << "7. Delete Account\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
-        case 1: {
-            int roomNo;
-            cout << "Enter room number to book: ";
-            cin >> roomNo;
+            case 1: {
+                int roomNo;
+                cout << "Enter room number to book: ";
+                cin >> roomNo;
 
-            // Check if the room exists and if it is available
-            bool roomFound = false;
-            bool roomAvailable = false;
-            for (Room* room : lodge->getRooms()) {  // Assuming parkInn is an instance of ParkInn
-                if (room->getRoomNo() == roomNo) {
-                    roomFound = true;
-                    if (room->getRoomAvailability()) {
-                        roomAvailable = true;
+                // Check if the room exists and if it is available
+                bool roomFound = false;
+                bool roomAvailable = false;
+                for (Room* room : lodge->getRooms()) {  // Assuming parkInn is an instance of ParkInn
+                    if (room->getRoomNo() == roomNo) {
+                        roomFound = true;
+                        if (room->getRoomAvailability()) {
+                            roomAvailable = true;
+                        }
+                        break;
                     }
-                    break;
                 }
+
+                if (!roomFound) {
+                    cout << "Room number " << roomNo << " does not exist.\n";
+                } else if (!roomAvailable) {
+                    cout << "Room number " << roomNo << " is already booked.\n";
+                } else {
+                    customer->bookRoom(roomNo);  // Proceed with booking
+                }
+                break;
             }
 
-            if (!roomFound) {
-                cout << "Room number " << roomNo << " does not exist.\n";
-            } else if (!roomAvailable) {
-                cout << "Room number " << roomNo << " is already booked.\n";
-            } else {
-                customer->bookRoom(roomNo);  // Proceed with booking
+            case 2: {
+                int roomNo;
+                cout << "Enter room number to cancel: ";
+                cin >> roomNo;
+                customer->cancelBooking(roomNo);
+                break;
             }
-            break;
+            case 3:{
+                customer->viewBookingHistory();
+                break;
+            }
+            case 4:{
+                lodge->viewAvailableRooms();
+                break;
+            }
+            case 5:{
+                cout << "Signing out...\n";
+                break;
+            }
+            case 6:{
+                cout << "Creating Customer Account\n";
+                // Logic to create a new customer account (e.g., input name, email, password)
+                string name, email, password;
+                cout << "Enter name: ";
+                cin >> name;
+                cout << "Enter email: ";
+                cin >> email;
+                cout << "Enter password: ";
+                cin >> password;
+                // Store account in a data structure, or any other method of saving the account
+                Customer *newCustomer = new Customer(name, email, password);
+                lodge->createAccount(newCustomer);
+                cout << "Customer account created successfully!\n";
+                break;
+            }
+            case 7: {
+                lodge->deleteAccount(customer);
+                cout << "Deleting account..." << endl;
+                break;
+            }
         }
-
-        case 2: {
-            int roomNo;
-            cout << "Enter room number to cancel: ";
-            cin >> roomNo;
-            customer->cancelBooking(roomNo);
-            break;
-        }
-        case 3:
-            customer->viewBookingHistory();
-            break;
-        case 4:
-            lodge->viewAvailableRooms();
-            break;
-        case 5:
-            cout << "Signing out...\n";
-            break;
-        case 6:
-            cout << "Creating Customer Account\n";
-            // Logic to create a new customer account (e.g., input name, email, password)
-            string name, email, password;
-            cout << "Enter name: ";
-            cin >> name;
-            setName(name);
-            cout << "Enter email: ";
-            cin >> email;
-            setEmail(email);
-            cout << "Enter password: ";
-            cin >> password;
-            setPassword(password);
-            // Store account in a data structure, or any other method of saving the account
-            Customer *newCustomer(name, email, password);
-            parkInn.createAccount(newCustomer);
-            cout << "Customer account created successfully!\n";
-            break;
-        default:
-            cout << "Invalid choice. Please try again.\n";
-        }
-    } while (choice != 5);
+    } while (choice != 5 && choice != 7);
 }
 
 // Display menu for employees
 void displayEmployeeMenu(Employee *employee, ParkInnLodge *lodge) {
     int choice;
+
     do {
         cout << "\n--- Employee Menu ---\n";
         cout << "1. Add Room\n";
@@ -268,60 +413,60 @@ void displayEmployeeMenu(Employee *employee, ParkInnLodge *lodge) {
         cout << "4. View Check-Ins and Check-Outs\n";
         cout << "5. View Analytics\n";
         cout << "6. Sign-out\n";
-        cout << "7. Create Account\n"
+        cout << "7. Create Account\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
-        case 1: {
-            int roomNo;
-            double price;
-            cout << "Enter room number: ";
-            cin >> roomNo;
-            cout << "Enter room price: ";
-            cin >> price;
-            employee->addRoom(lodge->getRooms(), new StandardRoom(roomNo, price));
-            break;
-        }
-        case 2: {
-            int roomNo;
-            cout << "Enter room number to delete: ";
-            cin >> roomNo;
-            employee->deleteRoom(lodge->getRooms(), roomNo);
-            break;
-        }
-        case 3:
-            lodge->viewAvailableRooms();
-            break;
-        case 4:
-            employee->viewCheckInOut();
-            break;
-        case 5:
-            employee->viewAnalytics();
-            break;
-        case 6:
-            cout << "Signing out...\n";
-            break;
-        case 7:
-            cout << "Creating Customer Account\n";
-            // Logic to create a new customer account (e.g., input name, email, password)
-            string name, email, password;
-            cout << "Enter name: ";
-            cin >> name;
-            setName(name);
-            cout << "Enter email: ";
-            cin >> email;
-            setEmail(email);
-            cout << "Enter password: ";
-            cin >> password;
-            setPassword(password);
-            // Store account in a data structure, or any other method of saving the account
-            Customer *newCustomer(name, email, password);
-            parkInn.createAccount(newCustomer);
-            cout << "Customer account created successfully!\n";
-            break;
-        default:
-            cout << "Invalid choice. Please try again.\n";
+            case 1: {
+                int roomNo;
+                double price;
+                cout << "Enter room number: ";
+                cin >> roomNo;
+                cout << "Enter room price: ";
+                cin >> price;
+                employee->addRoom(lodge->getRooms(), new StandardRoom(roomNo, price));
+                break;
+            }
+            case 2: {
+                int roomNo;
+                cout << "Enter room number to delete: ";
+                cin >> roomNo;
+                employee->deleteRoom(lodge->getRooms(), roomNo);
+                break;
+            }
+            case 3: {
+                lodge->viewAvailableRooms();
+                break;
+            }
+            case 4: {
+                employee->viewCheckInOut();
+                break;
+            }
+            case 5: {
+                employee->viewAnalytics();
+                break;
+            }
+            case 6: {
+                cout << "Signing out...\n";
+                break;
+                }
+            case 7: {
+                cout << "Creating Customer Account\n";
+                // Logic to create a new customer account (e.g., input name, email, password)
+                string name, email, password;
+                cout << "Enter name: ";
+                cin >> name;
+                cout << "Enter email: ";
+                cin >> email;
+                cout << "Enter password: ";
+                cin >> password;
+                // Store account in a data structure, or any other method of saving the account
+                Customer *newCustomer = new Customer(name, email, password);
+                lodge->createAccount(newCustomer);
+                cout << "Customer account created successfully!\n";
+                break;
+            }
         }
     } while (choice != 6);
 }
@@ -362,4 +507,4 @@ int main() {
         }
     }
     return 0;
-};
+}
