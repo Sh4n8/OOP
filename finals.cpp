@@ -4,20 +4,9 @@
 #include <string>
 #include <limits>
 #include <algorithm>
+#include <regex>
 using namespace std;
 
-// * TO-DO:
-// * - = not done
-// * = = in progress
-// * + = finished
-// * ~ = failed/canceled
-
-// - edit booking (nothing happens after entering booking id)
-// ~ edit account (nothing happens after typing 6)
-// - delete account (not working properly)
-// - view checkins (not implemented yet)
-// + checkin/out (not implemented yet)
-// - generate report (not implemented yet)
 
 bool intIsValid(int input) {
     bool isIntValid = true;
@@ -714,7 +703,6 @@ void display() {
                                 rooms.push_back(new DeluxeRoom("101", 5000.0));
                                 rooms.push_back(new StandardRoom("102", 3000.0));
                                 rooms.push_back(new SuiteRoom("201", 10000.0));
-                                cout << "thank you beyoncé 😭🙏" << endl;
                                 break;
                             }
                             default:
@@ -833,39 +821,6 @@ void display() {
 }
 
 int main() {
+    cout << "\nGroup 5 - Casanova, Cruzat, Gonzales, Guirre\n" << endl;
     display();
-
-    /*
-    Dear Queen Beyoncé,
-
-    We hope this message finds you well. 
-    We’re writing to express our heartfelt gratitude for everything you represent 
-    and the immense impact your music has had on our lives, especially during our journey 
-    through Object-Oriented Programming. 
-
-    As a group that faced countless late nights and moments of doubt while tackling complex concepts, 
-    we found incredible solace and inspiration in your music. 
-    Your songs, from “Run the World (Girls)” to “Halo,” became our soundtrack during every coding session, 
-    reminding us that perseverance, strength, and belief in ourselves were key to overcoming challenges. 
-
-    There were times when the coding seemed too difficult, and we felt like giving up, 
-    but your powerful anthems fueled us to keep going, to dig deeper, and to never stop until we got it right. 
-    In those moments, we thought of how you’ve always pushed boundaries in your own career, 
-    and it gave us the courage to push through our struggles and keep moving forward.
-
-    Your music has always been a source of empowerment, but in this particular moment, 
-    it became more than just songs—-it became the very energy that carried us through to success. 
-    The confidence and resilience you exude, both on and off the stage, are qualities we aspire to embody in our own lives. 
-    In every note, every lyric, you remind us that there is no obstacle too great when we commit ourselves wholeheartedly. 
-
-    Thanks to your influence, we were able to tackle one of the most challenging subjects we’ve faced 
-    and come out successful on the other side. Passing our finals in Object-Oriented Programming 
-    is a victory we share with you, as your artistry helped us stay focused, determined, and relentless. 
-
-    Thank you for being not just a global icon but a beacon of light and strength for so many, 
-    including us. Your legacy continues to inspire and motivate us in ways words can hardly capture.
-
-    With all our love and deepest appreciation,  
-    C2B - Group 5 <3
-    */
 }
