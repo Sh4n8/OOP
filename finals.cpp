@@ -626,29 +626,27 @@ class ParkInnLodge {
             }
         }
 
-        void checkIn(Booking& booking) {
-            if (!booking.getHasCheckedIn()) {
-                if (!booking.getHasCheckedOut()) {
-                    booking.setHasCheckedIn(true);
-                    cout << "Booking ID " << booking.getBookingID() << " successfully checked in!" << endl;
-                } else {
-                    cout << "Booking has already been checked out." << endl;
-                }
-            } else {
-                cout << "Booking ID " << booking.getBookingID() << " is already checked in." << endl;
-            }
+         void viewCheckIns(const vector<pair<string, string>>& checkIns) const {
+        cout << "------ Check-Ins ------\n";
+        if (checkIns.empty()) {
+            cout << "No check-ins to display.\n";
+            return;
         }
+        for (const auto& entry : checkIns) {
+            cout << "Guest Name: " << entry.first << ", Room No: " << entry.second << endl;
+        }
+    }
 
-        void checkOut(Booking& booking) {
-            if (!booking.getHasCheckedIn()) {
-                cout << "Booking ID " << booking.getBookingID() << " has not checked in yet." << endl;
-            } else if (!booking.getHasCheckedOut()) {
-                booking.setHasCheckedOut(true);
-                cout << "Booking ID " << booking.getBookingID() << " successfully checked out!" << endl;
-            } else {
-                cout << "Booking has already been checked out." << endl;
-            }
+    void viewCheckOuts(const vector<pair<string, string>>& checkOuts) const {
+        cout << "------ Check-Outs ------\n";
+        if (checkOuts.empty()) {
+            cout << "No check-outs to display.\n";
+            return;
         }
+        for (const auto& entry : checkOuts) {
+            cout << "Guest Name: " << entry.first << ", Room No: " << entry.second << endl;
+        }
+    }
         
         const vector<Booking*>& getBookings() const {
             return bookings;
