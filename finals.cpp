@@ -4,20 +4,8 @@
 #include <string>
 #include <limits>
 #include <algorithm>
+#include <regex>
 using namespace std;
-
-// * TO-DO:
-// * - = not done
-// * = = in progress
-// * + = finished
-// * ~ = failed/canceled
-
-// - edit booking (nothing happens after entering booking id)
-// ~ edit account (nothing happens after typing 6)
-// - delete account (not working properly)
-// - view checkins (not implemented yet)
-// + checkin/out (not implemented yet)
-// - generate report (not implemented yet)
 
 class Room {
 protected:
@@ -480,6 +468,9 @@ class ParkInnLodge {
 
 };
 
+bool isValidRoomID(const string& roomID);
+bool isValidDate(const string& date);
+
 void display() {
     vector<User*> users;
     vector<Room*> rooms;
@@ -508,7 +499,7 @@ void display() {
                 cin >> password;
 
                 User* loggedInUser = User::login(users, email, password);
-                if (loggedInUser && loggedInUser->getRole() == "Customer") {  // Using the getter
+                if (loggedInUser && loggedInUser->getRole() == "Customer") {  
                     Customer* customer = static_cast<Customer*>(loggedInUser);
                     bool guestMenu = true;
 
@@ -540,41 +531,141 @@ void display() {
 
                                 cout << "----------Park Inn Lodge Book Room----------\n";
 
-                                cout << "Enter the Room ID you want to book: ";
-                                cin >> roomNo;
-                                bool found = false;
-                                for (auto& rewm : rooms) {
-                                    if (roomNo == rewm->getRoomNo()) {
-                                        found = true;
+    
+                                do {
+                                    cout << "Enter the Room ID you want to book: ";
+                                    cin >> roomNo;
+                                if (roomNo.empty()) {
+                                    cout << "Room ID cannot be empty. Please enter a valid Room ID.\n";
                                     }
-                                }
-                    
-                                if (found) {
+                                } while (roomNo.empty());
+
+    
+                                auto isValidDate = [](const string& date) -> bool {
+                                    if (date.length() != 10 || date[4] != '-' || date[7] != '-') return false;
+                                    for (int i = 0; i < date.length(); ++i) {
+                                        if ((i != 4 && i != 7) && !isdigit(date[i])) return false;
+                                    }
+                                    return true;
+                                };
+
+                                do {
                                     cout << "Enter Check-in Date (YYYY-MM-DD): ";
                                     cin >> fromDate;
+                                if (!isValidDate(fromDate)) {
+                                    cout << "Invalid date format. Please use YYYY-MM-DD.\n";
+                                    }
+                                } while (!isValidDate(fromDate));
+
+                                do {
                                     cout << "Enter Check-out Date (YYYY-MM-DD): ";
                                     cin >> toDate;
-                                    cout << "Enter the Number of Guests: ";
-                                    cin >> guests;
-                                    cout << "Choose Payment Method (1: Cash, 2: Digital Wallet, 3: Credit/Debit Card): ";
-                                    int paymentChoice;
-                                    cin >> paymentChoice;
-                                    switch (paymentChoice) {
-                                        case 1:
-                                            paymentMethod = "Cash";
-                                            break;
-                                        case 2: 
-                                            paymentMethod = "Digital Wallet";
-                                            break;
-                                        case 3:
-                                            paymentMethod = "Credit/Debit Card";
-                                            break;
-                                    }
-                                    double price = 2000;
-                                    customer->bookRoom(roomNo, fromDate, toDate, guests, paymentMethod, price, email);
-                                } else {
-                                    cout << "Booking failed: room does not exist." << endl;
+                                if (!isValidDate(toDate)) {
+                                    cout << "Invalid date format. Please use YYYY-MM-DD.\n";
                                 }
+                                    } while (!isValidDate(toDate));
+
+    
+                                do {
+                                    cout << "Enter the Number of Guests (maximum 10): ";
+                                    cin >> guests;
+                                    if (guests <= 0 || guests > 10) {
+                                        cout << "Invalid number of guests. Please enter a value between 1 and 10.\n";
+                                    }
+                                    } while (guests <= 0 || guests > 10);
+
+    
+                                    int paymentChoice;
+                                do {
+                                    cout << "Choose Payment Method (1: Cash, 2: Gcash, 3: Card): ";
+                                    cin >> paymentChoice;
+                                    if (paymentChoice < 1 || paymentChoice > 3) {
+                                        cout << "Invalid payment choice. Please select 1, 2, or 3.\n";
+                                    }
+                                } while (paymentChoice < 1 || paymentChoice > 3);
+
+                                switch (paymentChoice) {
+                                    case 1:
+                                        paymentMethod = "Cash";
+                                        break;
+                                    case 2:
+                                        paymentMethod = "Gcash";
+                                        break;
+                                    case 3: {
+                                        
+                                        string cardNumber, expiration, pin;
+                                        bool isCredit;
+                                        
+                                        int cardTypeChoice;
+                                        do {
+                                         cout << "Select Card Type (1: Credit, 2: Debit): ";
+                                         cin >> cardTypeChoice;
+                                        if (cardTypeChoice == 1) {
+                                         isCredit = true;
+                                         paymentMethod = "Credit Card";
+                                        } else if (cardTypeChoice == 2) {
+                                         isCredit = false;
+                                         paymentMethod = "Debit Card";
+                                        } else {
+                                        cout << "Invalid choice. Please select 1 for Credit or 2 for Debit.\n";
+                                             }
+                                        } while (cardTypeChoice != 1 && cardTypeChoice != 2);
+                                        
+                                        do {
+                                            cout << "Enter Card Number (16 digits): ";
+                                            cin >> cardNumber;
+                                            if (cardNumber.length() != 16 || !all_of(cardNumber.begin(), cardNumber.end(), ::isdigit)) {
+                                                cout << "Invalid card number. It must be exactly 16 digits.\n";
+                                            }
+                                        } while (cardNumber.length() != 16 || !all_of(cardNumber.begin(), cardNumber.end(), ::isdigit));
+
+                                        // Input expiration date
+                                        do {
+                                            cout << "Enter Expiration Date (MM/YY): ";
+                                            cin >> expiration;
+
+                                            regex expPattern("^\\d{2}/\\d{2}$");
+                                            if (!regex_match(expiration, expPattern)) {
+                                                cout << "Invalid expiration date format. Use MM/YY.\n";
+                                                continue;
+                                            }
+
+                                            int expMonth, expYear;
+                                            sscanf(expiration.c_str(), "%d/%d", &expMonth, &expYear);
+                                            if (expMonth < 1 || expMonth > 12) {
+                                                cout << "Invalid month in expiration date. Please try again.\n";
+                                                continue;
+                                            }
+
+                                            // Check if expired
+                                            time_t now = time(nullptr);
+                                            tm* current = localtime(&now);
+                                            int currentYear = (current->tm_year % 100); 
+                                            int currentMonth = current->tm_mon + 1;    
+
+                                            if (expYear < currentYear || (expYear == currentYear && expMonth < currentMonth)) {
+                                                cout << "Card is expired. Please use a valid card.\n";
+                                                continue;
+                                            }
+                                            break;
+                                        } while (true);
+
+                                        // Input PIN
+                                        do {
+                                            cout << "Enter Card PIN (4 digits): ";
+                                            cin >> pin;
+                                            if (pin.length() != 4 || !all_of(pin.begin(), pin.end(), ::isdigit)) {
+                                                cout << "Invalid PIN. It must be exactly 4 digits.\n";
+                                            }
+                                        } while (pin.length() != 4 || !all_of(pin.begin(), pin.end(), ::isdigit));
+
+                                        paymentMethod = "Debit Card"; // Assign appropriate method
+                                        break;
+                                    }
+                                }
+
+                                double price = 2000; // Example room price, adjust based on room
+                                customer->bookRoom(roomNo, fromDate, toDate, guests, paymentMethod, price);
                                 break;
                             }
                             case 3: { // Edit Booking
@@ -582,7 +673,6 @@ void display() {
                                 cout << "----------Park Inn Lodge Edit Booking----------\n";
                                 cout << "Enter Booking ID to edit: ";
                                 cin >> bookingID;
-                                // Add logic to edit booking details here.
                                 break;
                             }
                             case 4: { // Cancel Booking
@@ -602,12 +692,11 @@ void display() {
                                 string passEntered;
                                 cout << "Enter password to delete account: ";
                                 cin >> passEntered;
-                                
+
                                 if (customer->getPassword() == passEntered) {
-                                    if (customer->deleteAccount(users)) {
-                                        cout << "Account deleted." << endl;
-                                        guestMenu = false;
-                                    }
+                                    customer->deleteAccount();
+                                    cout << "Account deleted." << endl;
+                                    guestMenu = false;
                                 } else {
                                     cout << "Cannot delete account: incorrect password" << endl;
                                 }
@@ -615,13 +704,6 @@ void display() {
                             }
                             case 7: { // Logout
                                 guestMenu = false;
-                                break;
-                            }
-                            case 69: { // Spawn rooms
-                                rooms.push_back(new DeluxeRoom("101", 5000.0));
-                                rooms.push_back(new StandardRoom("102", 3000.0));
-                                rooms.push_back(new SuiteRoom("201", 10000.0));
-                                cout << "thank you beyoncé 😭🙏" << endl;
                                 break;
                             }
                             default:
@@ -659,17 +741,8 @@ void display() {
                                 break;
                             }
                             case 2: {
-                                string passEntered;
                                 cout << "----------Park Inn Lodge Deleting Rooms----------\n";
-                                cout << "Enter password to delete room: ";
-                                cin >> passEntered;
-                                
-                                if (admin->getPassword() == passEntered) {
-                                    admin->deleteRoom(rooms);
-                                    cout << "Deleted room." << endl;
-                                } else {
-                                    cout << "Cannot delete room: incorrect password" << endl;
-                                }
+                                admin->deleteRoom(rooms);
                                 break;
                             }
                             case 3: {
@@ -687,7 +760,7 @@ void display() {
                             }
                             case 5: {
                                 cout << "----------Park Inn Lodge Generate Report----------\n";
-                                // admin->generateReport();
+                                admin->generateReport();
                                 break;
                             }
                             case 6:
@@ -700,7 +773,7 @@ void display() {
                 }
                 break;
             }
-            case 3: { // Register as Customer
+            case 3: { 
                 string name, email, password;
                 cout << "Enter your Name: ";
                 cin >> name;
@@ -726,39 +799,4 @@ void display() {
 
 int main() {
     display();
-
-    /*
-    Dear Queen Beyoncé,
-
-    We hope this message finds you well. 
-    We’re writing to express our heartfelt gratitude for everything you represent 
-    and the immense impact your music has had on our lives, especially during our journey 
-    through Object-Oriented Programming. 
-
-    As a group that faced countless late nights and moments of doubt while tackling complex concepts, 
-    we found incredible solace and inspiration in your music. 
-    Your songs, from “Run the World (Girls)” to “Halo,” became our soundtrack during every coding session, 
-    reminding us that perseverance, strength, and belief in ourselves were key to overcoming challenges. 
-
-    There were times when the coding seemed too difficult, and we felt like giving up, 
-    but your powerful anthems fueled us to keep going, to dig deeper, and to never stop until we got it right. 
-    In those moments, we thought of how you’ve always pushed boundaries in your own career, 
-    and it gave us the courage to push through our struggles and keep moving forward.
-
-    Your music has always been a source of empowerment, but in this particular moment, 
-    it became more than just songs—-it became the very energy that carried us through to success. 
-    The confidence and resilience you exude, both on and off the stage, are qualities we aspire to embody in our own lives. 
-    In every note, every lyric, you remind us that there is no obstacle too great when we commit ourselves wholeheartedly. 
-
-    Thanks to your influence, we were able to tackle one of the most challenging subjects we’ve faced 
-    and come out successful on the other side. Passing our finals in Object-Oriented Programming 
-    is a victory we share with you, as your artistry helped us stay focused, determined, and relentless. 
-
-    Thank you for being not just a global icon but a beacon of light and strength for so many, 
-    including us. Your legacy continues to inspire and motivate us in ways words can hardly capture.
-
-    With all our love and deepest appreciation,  
-    C2B - Group 5 <3
-    */
 }
-};
