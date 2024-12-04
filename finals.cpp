@@ -450,6 +450,9 @@ class ParkInnLodge {
 
 };
 
+bool isValidRoomID(const string& roomID);
+bool isValidDate(const string& date);
+
 void display() {
     vector<User*> users;
     vector<Room*> rooms;
@@ -510,17 +513,58 @@ void display() {
 
                                 cout << "----------Park Inn Lodge Book Room----------\n";
 
-                                cout << "Enter the Room ID you want to book: ";
-                                cin >> roomNo;
-                                cout << "Enter Check-in Date (YYYY-MM-DD): ";
-                                cin >> fromDate;
-                                cout << "Enter Check-out Date (YYYY-MM-DD): ";
-                                cin >> toDate;
-                                cout << "Enter the Number of Guests: ";
-                                cin >> guests;
-                                cout << "Choose Payment Method (1: Cash, 2: Gcash, 3: Debit Card): ";
-                                int paymentChoice;
-                                cin >> paymentChoice;
+    
+                                do {
+                                    cout << "Enter the Room ID you want to book: ";
+                                    cin >> roomNo;
+                                if (roomNo.empty()) {
+                                    cout << "Room ID cannot be empty. Please enter a valid Room ID.\n";
+                                    }
+                                } while (roomNo.empty());
+
+    
+                                auto isValidDate = [](const string& date) -> bool {
+                                    if (date.length() != 10 || date[4] != '-' || date[7] != '-') return false;
+                                    for (int i = 0; i < date.length(); ++i) {
+                                        if ((i != 4 && i != 7) && !isdigit(date[i])) return false;
+                                    }
+                                    return true;
+                                };
+
+                                do {
+                                    cout << "Enter Check-in Date (YYYY-MM-DD): ";
+                                    cin >> fromDate;
+                                if (!isValidDate(fromDate)) {
+                                    cout << "Invalid date format. Please use YYYY-MM-DD.\n";
+                                    }
+                                } while (!isValidDate(fromDate));
+
+                                do {
+                                    cout << "Enter Check-out Date (YYYY-MM-DD): ";
+                                    cin >> toDate;
+                                if (!isValidDate(toDate)) {
+                                    cout << "Invalid date format. Please use YYYY-MM-DD.\n";
+                                }
+                                    } while (!isValidDate(toDate));
+
+    
+                                do {
+                                    cout << "Enter the Number of Guests (maximum 10): ";
+                                    cin >> guests;
+                                    if (guests <= 0 || guests > 10) {
+                                        cout << "Invalid number of guests. Please enter a value between 1 and 10.\n";
+                                    }
+                                    } while (guests <= 0 || guests > 10);
+
+    
+                                    int paymentChoice;
+                                do {
+                                    cout << "Choose Payment Method (1: Cash, 2: Gcash, 3: Card): ";
+                                    cin >> paymentChoice;
+                                    if (paymentChoice < 1 || paymentChoice > 3) {
+                                        cout << "Invalid payment choice. Please select 1, 2, or 3.\n";
+                                    }
+                                } while (paymentChoice < 1 || paymentChoice > 3);
 
                                 switch (paymentChoice) {
                                     case 1:
@@ -530,11 +574,25 @@ void display() {
                                         paymentMethod = "Gcash";
                                         break;
                                     case 3: {
-                                        // Card payment logic with validation
+                                        
                                         string cardNumber, expiration, pin;
                                         bool isCredit;
-
-                                        // Input card number
+                                        
+                                        int cardTypeChoice;
+                                        do {
+                                         cout << "Select Card Type (1: Credit, 2: Debit): ";
+                                         cin >> cardTypeChoice;
+                                        if (cardTypeChoice == 1) {
+                                         isCredit = true;
+                                         paymentMethod = "Credit Card";
+                                        } else if (cardTypeChoice == 2) {
+                                         isCredit = false;
+                                         paymentMethod = "Debit Card";
+                                        } else {
+                                        cout << "Invalid choice. Please select 1 for Credit or 2 for Debit.\n";
+                                             }
+                                        } while (cardTypeChoice != 1 && cardTypeChoice != 2);
+                                        
                                         do {
                                             cout << "Enter Card Number (16 digits): ";
                                             cin >> cardNumber;
